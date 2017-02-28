@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"strconv"
 
@@ -71,4 +72,20 @@ func mybasicAuth(handler http.HandlerFunc, username, password string) http.Handl
 			return false
 		}
 	})
+}
+
+func GetIntranetIP() (rv []string) {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	for _, addr := range addrs {
+		if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				rv = append(rv, ipnet.IP.String())
+			}
+		}
+	}
+	return
 }

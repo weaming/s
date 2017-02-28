@@ -61,6 +61,9 @@ func main() {
 	ServeDir("/img/", ROOT)
 
 	fmt.Printf("Open http://127.0.0.1:%v to enjoy!\n", strings.Split(*LISTEN, ":")[1])
+	for _, ip := range GetIntranetIP() {
+		fmt.Printf("Your intranet IP: %v ==> http://%v:%v\n", ip, ip, strings.Split(*LISTEN, ":")[1])
+	}
 	http.ListenAndServe(*LISTEN, nil)
 }
 
