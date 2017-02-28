@@ -57,6 +57,8 @@ func main() {
 	}
 
 	Redirect("/", "/index")
+	ServeFile("/favicon.ico", fp.Join(ROOT, "./favicon.ico"))
+
 	http.Handle("/index/", MyAlbum{root: ROOT})
 	ServeDir("/img/", ROOT)
 
@@ -112,7 +114,7 @@ func (album MyAlbum) handlerFunc(w http.ResponseWriter, r *http.Request) {
 		<html lang="en">
 		<head>
 		<meta charset="UTF-8">
-		<title>My Photos</title>
+		<title>Static Files Index</title>
 		<style>
 		.right{float: right;}
 		.card{

@@ -25,6 +25,13 @@ func ServeDir(prefix, path string) {
 	http.Handle(prefix, gziphandler.GzipHandler(http.StripPrefix(prefix, http.FileServer(http.Dir(path)))))
 }
 
+func ServeFile(path, fp string) {
+	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
+		logit(r)
+		http.ServeFile(w, r, fp)
+	})
+}
+
 func logit(r *http.Request) {
 	log.Printf(`%v "%v %v %v"`, r.RemoteAddr, r.Method, r.RequestURI, r.Proto)
 }
