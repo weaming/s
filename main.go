@@ -24,7 +24,7 @@ func main() {
 	flag.BoolVar(&NEED_AUTH, "a", true, "Whether need authorization.")
 	flag.StringVar(&ADMIN, "u", "admin", "Basic authentication username")
 	flag.StringVar(&PASSWORD, "p", DEFAULT_PW, "Basic authentication password")
-	flag.IntVar(&size, "n", 20, "The maximum number of photos in each page.")
+	flag.IntVar(&size, "n", 20, "The maximum number of files in each page.")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s [options] ROOT\nThe ROOT is the directory to be serve.\n\n", os.Args[0])
@@ -147,14 +147,14 @@ func (album MyAlbum) handlerFunc(w http.ResponseWriter, r *http.Request) {
 		box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
 		}
 
-		div.photos div.container{
+		div.files div.container{
 		display: flex;
 		justify-content: space-around;
 		flex-wrap: wrap;
 		box-sizing: border-box;
 		}
 
-		a.photo{
+		a.file{
 		margin: 5px;
 		width: 100%%;
 		display: block;
@@ -166,8 +166,8 @@ func (album MyAlbum) handlerFunc(w http.ResponseWriter, r *http.Request) {
 		<h3> Directories: %v <a href="/index" class="right">Home</a> </h3>
 		<div>%v</div>
 		</div>
-		<div class="card photos">
-		<h3>Photos: %v Size: %v</h3>
+		<div class="card files">
+		<h3>Files: %v Size: %v</h3>
 		<div class="pagiContainer">%v</div>
 		<div class="container"> %v </div>
 		</div>
@@ -212,7 +212,7 @@ func Img2Html(pathName string, dir *Dir, page int) (string, []string, int) {
 		u, _ := url.Parse(pathName[6:])
 		u.Path = path.Join("/img/", u.Path, file)
 
-		htmlImages = append(htmlImages, fmt.Sprintf(`<a class="photo" href="%v" title="%v">%v</a>`,
+		htmlImages = append(htmlImages, fmt.Sprintf(`<a class="file" href="%v" title="%v">%v</a>`,
 			"/img/"+path.Join(pathName[6:], file),
 			fmt.Sprintf("%v [%v]", file, file_size_str(_abs_images[index])),
 			file))

@@ -38,11 +38,13 @@ func NewDir(path string) *Dir {
 				dir.Files = append(dir.Files, relPath)
 				dir.AbsFiles = append(dir.AbsFiles, absPath)
 
+				// list all files
 				if fp.Base(relPath) != ".DS_Store" {
 					dir.Images = append(dir.Images, relPath)
 					dir.AbsImages = append(dir.AbsImages, absPath)
 				}
 
+				// list all photos
 				//switch strings.ToLower(fp.Ext(relPath)) {
 				//case ".jpg", ".jpeg", ".png", ".gif", ".bmp":
 				//dir.Images = append(dir.Images, relPath)
