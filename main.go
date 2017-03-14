@@ -213,7 +213,7 @@ func Img2Html(pathName string, dir *Dir, page int) (string, []string, int) {
 		u.Path = path.Join("/img/", u.Path, file)
 
 		htmlImages = append(htmlImages, fmt.Sprintf(`<a class="file" href="%v" title="%v">%v</a>`,
-			"/img/"+path.Join(pathName[6:], file),
+			"/img"+path.Join(pathName[6:], file),
 			fmt.Sprintf("%v [%v]", file, file_size_str(_abs_images[index])),
 			file))
 	}
@@ -228,7 +228,7 @@ func Dir2Html(pathName string, dir *Dir) []string {
 
 			rv = append(rv, fmt.Sprintf(
 				`<div class="directory"><a class="link" href="%v">%v</a><span class="count right">[%v]</span><span class="right">%v</span></div>`,
-				"/index/"+fp.Join(pathName[6:], file)+"/",
+				"/index"+fp.Join(pathName[6:], file)+"/",
 				file+"/",
 				len(sub_dir.Images),
 				dir_images_size_str(dir.AbsDirs[index])))
