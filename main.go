@@ -110,31 +110,32 @@ func (album MyAlbum) handlerFunc(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte(fmt.Sprintf(`
-		<!DOCTYPE html>
-		<html lang="en">
-		<head>
-		<meta charset="UTF-8">
-		<title>Static Files Index</title>
-		<style>
-		.right{float: right;}
-		.card{
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	<meta charset="UTF-8">
+	<title>Static Files Index</title>
+	<style>
+	.right{float: right;}
+	.card{
 		background-color: #fff;
 		box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
 		margin: 0 auto 1rem auto;
 		padding: 1rem;
 		max-width: 900px;
 		border-radius: 3px;
-		}
-		.directory:hover
-		{
+	}
+	a:link{color: #1a0dab;}
+	a:visited{color: #609;}
+	.directory:hover {
 		background-color: #eee;
-		}
+	}
 
-		div.pagination {
+	div.pagination {
 		min-height: 20px;
-		}
+	}
 
-		div.pagination a{
+	div.pagination a{
 		display: inline-block;
 		border: 1px solid #aaa;
 		padding: 5px 10px;
@@ -142,37 +143,33 @@ func (album MyAlbum) handlerFunc(w http.ResponseWriter, r *http.Request) {
 		border-radius: 4px;
 		color: black;
 		text-decoration: none;
-		}
-		div.pagination a:hover{
+	}
+	div.pagination a:hover{
 		box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
-		}
+	}
 
-		div.files div.container{
-		display: flex;
-		justify-content: space-around;
-		flex-wrap: wrap;
-		box-sizing: border-box;
-		}
-
-		a.file{
+	p.file{
 		margin: 5px;
 		width: 100%%;
-		display: block;
-		}
-		</style>
-		</head>
-		<body>
-		<div class="card directories">
-		<h3> Directories: %v <a href="/index" class="right">Home</a> </h3>
-		<div>%v</div>
-		</div>
-		<div class="card files">
-		<h3>Files: %v Size: %v</h3>
-		<div class="pagiContainer">%v</div>
-		<div class="container"> %v </div>
-		</div>
-		</body>
-		</html>`,
+	}
+	p.file:hover{
+		background-color: #34A853;
+	}
+
+	</style>
+	</head>
+	<body>
+	<div class="card directories">
+	<h3> Directories: %v <a href="/index" class="right">Home</a> </h3>
+	<div>%v</div>
+	</div>
+	<div class="card files">
+	<h3>Files: %v Size: %v</h3>
+	<div class="pagiContainer">%v</div>
+	<div class="container"> %v </div>
+	</div>
+	</body>
+	</html>`,
 		len(album.dir.Dirs),
 		strings.Join(Dir2Html(pathName, album.dir), "\n"),
 		len(album.dir.Images),
@@ -212,10 +209,11 @@ func Img2Html(pathName string, dir *Dir, page int) (string, []string, int) {
 		u, _ := url.Parse(pathName[6:])
 		u.Path = path.Join("/img/", u.Path, file)
 
-		htmlImages = append(htmlImages, fmt.Sprintf(`<a class="file" href="%v" title="%v">%v</a>`,
+		htmlImages = append(htmlImages, fmt.Sprintf(`<p class="file"><a class="file" href="%v" title="%v">%v</a><span class="size right">%v</span></p>`,
 			"/img"+path.Join(pathName[6:], file),
 			fmt.Sprintf("%v [%v]", file, file_size_str(_abs_images[index])),
-			file))
+			file,
+			file_size_str(_abs_images[index])))
 	}
 	return pagination, htmlImages, page
 }
