@@ -21,9 +21,9 @@ var ADMIN, PASSWORD string
 func main() {
 	var LISTEN = flag.String("l", ":8000", "Listen [host]:port, default bind to 0.0.0.0")
 
-	flag.BoolVar(&NEED_AUTH, "a", true, "Whether need authorization.")
-	flag.StringVar(&ADMIN, "u", "admin", "Basic authentication username")
-	flag.StringVar(&PASSWORD, "p", DEFAULT_PW, "Basic authentication password")
+	flag.BoolVar(&NEED_AUTH, "a", false, "Whether need authorization.")
+	flag.StringVar(&ADMIN, "u", "admin", "Basic authorization username")
+	flag.StringVar(&PASSWORD, "p", DEFAULT_PW, "Basic authorization password")
 	flag.IntVar(&size, "n", 20, "The maximum number of files in each page.")
 
 	flag.Usage = func() {
