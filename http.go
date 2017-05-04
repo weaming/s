@@ -22,12 +22,20 @@ func Redirect(from, to string) {
 }
 
 func ServeDir(prefix, path string) {
-	http.Handle(prefix, gziphandler.GzipHandler(http.StripPrefix(prefix, http.FileServer(http.Dir(path)))))
+	handler := http.StripPrefix(prefix, http.FileServer(http.Dir(path)))
+	_handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Server", "https://github.com/weaming/s")
+		handler.ServeHTTP(w, r)
+	})
+	http.Handle(prefix, gziphandler.GzipHandler(_handler))
 }
 
 func ServeFile(path, fp string) {
 	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
 		logit(r)
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Server", "https://github.com/weaming/s")
 		http.ServeFile(w, r, fp)
 	})
 }
