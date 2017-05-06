@@ -60,7 +60,7 @@ func main() {
 	ServeFile("/favicon.ico", fp.Join(ROOT, "./favicon.ico"))
 
 	http.Handle("/index/", MyAlbum{root: ROOT})
-	ServeDir("/img/", ROOT)
+	ServeDir("/s/", ROOT)
 
 	fmt.Printf("Open http://127.0.0.1:%v to enjoy!\n", strings.Split(*LISTEN, ":")[1])
 	for _, ip := range GetIntranetIP() {
@@ -89,9 +89,10 @@ func (album MyAlbum) handlerFunc(w http.ResponseWriter, r *http.Request) {
 
 	page, err := getQueryInt(r, "page")
 	if err != nil {
-		target, _ := AddQuery(pathName, "page", "1")
-		http.Redirect(w, r, target, http.StatusFound)
-		return
+		//target, _ := AddQuery(pathName, "page", "1")
+		//http.Redirect(w, r, target, http.StatusFound)
+		//return
+		page = 1
 	}
 
 	obj := NewDir(fp.Join(album.root, pathName[6:]))
@@ -207,10 +208,10 @@ func Img2Html(pathName string, dir *Dir, page int) (string, []string, int) {
 
 	for index, file := range _images {
 		u, _ := url.Parse(pathName[6:])
-		u.Path = path.Join("/img/", u.Path, file)
+		u.Path = path.Join("/s/", u.Path, file)
 
 		htmlImages = append(htmlImages, fmt.Sprintf(`<p class="file"><a class="file" href="%v" title="%v">%v</a><span class="size right">%v</span></p>`,
-			"/img"+path.Join(pathName[6:], file),
+			"/s"+path.Join(pathName[6:], file),
 			fmt.Sprintf("%v [%v]", file, file_size_str(_abs_images[index])),
 			file,
 			file_size_str(_abs_images[index])))
