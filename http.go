@@ -13,7 +13,7 @@ import (
 func redirect_handler(to string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logit(r)
-		http.Redirect(w, r, to, 301)
+		http.Redirect(w, r, to, 302)
 	}
 }
 
