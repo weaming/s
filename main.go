@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -66,7 +67,7 @@ func main() {
 	for _, ip := range GetIntranetIP() {
 		fmt.Printf("Your intranet IP: %v ==> http://%v:%v\n", ip, ip, strings.Split(*LISTEN, ":")[1])
 	}
-	http.ListenAndServe(*LISTEN, nil)
+	log.Fatal(http.ListenAndServe(*LISTEN, nil))
 }
 
 type MyAlbum struct {
