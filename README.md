@@ -1,5 +1,3 @@
-## Album
-
 Simple static server with optional basic authentication.
 
 ## Usage
