@@ -235,7 +235,7 @@ func (g *GitHttp) getGitDir(file_path string) (string, error) {
 
 	f := path.Join(root, file_path)
 	if _, err := os.Stat(f); os.IsNotExist(err) {
-		return "", err
+		return f, err
 	}
 
 	return f, nil

@@ -96,8 +96,7 @@ func (g *GitHttp) requestHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Repo not found on disk
 	if err != nil {
-		renderNotFoundText(w, "repo not found on disk")
-		return
+		RunCommandMust("git", "init", "--bare", dir)
 	}
 
 	// Build request info for handler
