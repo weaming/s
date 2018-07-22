@@ -1,8 +1,10 @@
 package githttp
 
 import (
+	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -96,6 +98,9 @@ func (g *GitHttp) requestHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Repo not found on disk
 	if err != nil {
+		if !filepath.IsAbs(dir) {
+			log.Fatalf("%v is not absolute path", dir)
+		}
 		RunCommandMust("git", "init", "--bare", dir)
 	}
 
