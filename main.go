@@ -57,14 +57,14 @@ func main() {
 	}
 
 	if GIT {
+		urlPrefix := "/"
+		red(fmt.Sprintf("Serve git smart http on path: %v", urlPrefix))
+		serveGit(ROOT, urlPrefix)
+	} else {
 		Redirect("/", "/index/")
 
 		urlPrefix := "/git/"
 		green(fmt.Sprintf("Serve git smart http on path: %v", urlPrefix))
-		serveGit(ROOT, urlPrefix)
-	} else {
-		urlPrefix := "/"
-		red(fmt.Sprintf("Serve git smart http on path: %v", urlPrefix))
 		serveGit(ROOT, urlPrefix)
 	}
 
