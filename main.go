@@ -54,11 +54,13 @@ func main() {
 		red("Warning: please set your HTTP basic authentication")
 	}
 
-	Redirect("/", "/index")
+	Redirect("/", "/index/")
 	ServeFile("/favicon.ico", fp.Join(ROOT, "./favicon.ico"))
 
 	http.Handle("/index/", WWW{root: ROOT})
 	ServeDir("/s/", ROOT)
+
+	serveGit(ROOT, "/git/")
 
 	fmt.Printf("Open http://127.0.0.1:%v to enjoy!\n", strings.Split(*LISTEN, ":")[1])
 	for _, ip := range GetIntranetIP() {

@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/AaronO/go-git-http"
+  packages = ["."]
+  revision = "1d9485b3a98f7484772acb5f0dda28b69b958fdd"
+  version = "1.0.0"
+
+[[projects]]
   name = "github.com/NYTimes/gziphandler"
   packages = ["."]
   revision = "2600fb119af974220d3916a5916d6e31176aac1b"
@@ -16,6 +22,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "bdb7c9ea8296b196452032fe5c1316d0c29cbfe355a9a4e2b6844912d9d144fe"
+  inputs-digest = "19b7a1be2042f55c28d6ef5fc359cad80c406140604f46fd5303594e14e4f81e"
   solver-name = "gps-cdcl"
   solver-version = 1
