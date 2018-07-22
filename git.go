@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/AaronO/go-git-http"
+	"github.com/weaming/go-git-http"
 )
 
 func serveGit(path string, urlPrefix string) {
