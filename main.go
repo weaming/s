@@ -16,12 +16,14 @@ var size int
 var NEED_AUTH bool
 var GIT bool
 var ADMIN, PASSWORD string
+var PURE_STATIC bool
 
 func main() {
 	var LISTEN = flag.String("l", ":8000", "Listen [host]:port, default bind to 0.0.0.0")
 
 	flag.BoolVar(&NEED_AUTH, "a", false, "Whether need authorization.")
 	flag.BoolVar(&GIT, "git", false, "Whether serve as git protocol smart http")
+	flag.BoolVar(&PURE_STATIC, "pure", false, "serve static on /")
 	flag.StringVar(&ADMIN, "u", "admin", "Basic authorization username")
 	flag.StringVar(&PASSWORD, "p", DEFAULT_PW, "Basic authorization password")
 	flag.IntVar(&size, "n", 20, "The maximum number of files in each page.")
@@ -56,22 +58,25 @@ func main() {
 		red("Warning: please set your HTTP basic authentication")
 	}
 
-	if GIT {
-		urlPrefix := "/"
-		red(fmt.Sprintf("Serve git smart http on path: %v", urlPrefix))
-		serveGit(ROOT, urlPrefix)
+	if PURE_STATIC {
+		ServeDir("/", ROOT)
 	} else {
-		Redirect("/", "/index/")
+		if GIT {
+			urlPrefix := "/"
+			red(fmt.Sprintf("Serve git smart http on path: %v", urlPrefix))
+			serveGit(ROOT, urlPrefix)
+		} else {
+			Redirect("/", "/index/")
 
-		urlPrefix := "/git/"
-		green(fmt.Sprintf("Serve git smart http on path: %v", urlPrefix))
-		serveGit(ROOT, urlPrefix)
+			urlPrefix := "/git/"
+			green(fmt.Sprintf("Serve git smart http on path: %v", urlPrefix))
+			serveGit(ROOT, urlPrefix)
+		}
+
+		ServeFile("/favicon.ico", fp.Join(ROOT, "./favicon.ico"))
+		http.Handle("/index/", WWW{root: ROOT})
+		ServeDir("/s/", ROOT)
 	}
-
-	ServeFile("/favicon.ico", fp.Join(ROOT, "./favicon.ico"))
-
-	http.Handle("/index/", WWW{root: ROOT})
-	ServeDir("/s/", ROOT)
 
 	fmt.Printf("Open http://127.0.0.1:%v to enjoy!\n", strings.Split(*LISTEN, ":")[1])
 	for _, ip := range GetIntranetIP() {
