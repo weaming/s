@@ -46,16 +46,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	green(fmt.Sprintf("To be listed direcotry: [%v]", ROOT))
+	fmt.Println(green("To be listed direcotry: [%v]", ROOT))
 
 	// basic authentication
 	if NEED_AUTH {
 		if PASSWORD == DEFAULT_PW {
-			red("Warning: set yourself password by option -p")
+			fmt.Println(red("Warning: set yourself password by option -p"))
 		}
-		green(fmt.Sprintf("Your basic auth name and password: [%v:%v]", ADMIN, PASSWORD))
+		fmt.Println(green("Your basic auth name and password: [%v:%v]", ADMIN, PASSWORD))
 	} else {
-		red("Warning: please set your HTTP basic authentication")
+		fmt.Println(red("Warning: please set your HTTP basic authentication"))
 	}
 
 	if PURE_STATIC {
@@ -63,13 +63,13 @@ func main() {
 	} else {
 		if GIT {
 			urlPrefix := "/"
-			red(fmt.Sprintf("Serve git smart http on path: %v", urlPrefix))
+			fmt.Println(red("Serve git smart http on path: %v", urlPrefix))
 			serveGit(ROOT, urlPrefix)
 		} else {
 			Redirect("/", "/index/")
 
 			urlPrefix := "/git/"
-			green(fmt.Sprintf("Serve git smart http on path: %v", urlPrefix))
+			fmt.Println(green("Serve git smart http on path: %v", urlPrefix))
 			serveGit(ROOT, urlPrefix)
 		}
 
