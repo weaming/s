@@ -4,6 +4,8 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 )
@@ -36,4 +38,13 @@ func MustNil(e interface{}) {
 
 func Sha256(s string) string {
 	return strings.ToUpper(fmt.Sprintf("%x", sha256.Sum256([]byte(s))))
+}
+
+func ReadFile(path string) string {
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Println("File reading error", err)
+		return ""
+	}
+	return string(data)
 }

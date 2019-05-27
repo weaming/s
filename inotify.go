@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gorilla/websocket"
@@ -51,9 +52,12 @@ func (p *WatcherMux) Start() {
 
 			topic, err := filepath.Rel(p.Root, event.Name)
 			MustNil(err)
-			published := p.pubsub.Pub(topic, event, false)
-			if !published {
-				log.Println("fsnotify pub fail:", topic)
+			// file changed
+			if event.Op&fsnotify.Write == fsnotify.Write {
+				published := p.pubsub.Pub(topic, event, false)
+				if !published {
+					log.Println("fsnotify pub fail:", topic)
+				}
 			}
 		case err, ok := <-p.watcher.Errors:
 			if !ok {
@@ -81,6 +85,7 @@ func (p *WatcherMux) Watch(path string) {
 
 func (p *WatcherMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Println("file as websocket:", r.URL)
+	lineNumbers := r.URL.Query().Get("linenumber") != ""
 
 	// par url path and file path
 	pathAsTopic, err := filepath.Rel(p.UrlPrefix, r.URL.Path)
@@ -101,18 +106,44 @@ func (p *WatcherMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// watch file
+
+	// load file contents
 	p.Watch(pathFile)
+
+	lastRead := ""
+	lastLine := 0
+	reRead := func() {
+		text := ReadFile(pathFile)
+		lines := strings.Split(text[len(lastRead):], "\n")
+		for i, line := range lines {
+			if i+1 == len(lines) && line == "" {
+				continue
+			}
+			lastLine += 1
+			if lineNumbers {
+				conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("%d %s", lastLine, line)))
+			} else {
+				conn.WriteMessage(websocket.TextMessage, []byte(line))
+			}
+		}
+		lastRead = text
+	}
+	reRead()
 
 	done := make(chan bool)
 	fn := func(msg interface{}) error {
-		log.Println(msg)
-		conn.WriteMessage(websocket.TextMessage, []byte(msg.(fsnotify.Event).Name))
+		event := msg.(fsnotify.Event)
+		// file changed
+		if event.Op&fsnotify.Write == fsnotify.Write {
+			reRead()
+		}
 		return nil
 	}
 	subKey := Sha256(fmt.Sprintf("%v", conn))
 	t := p.pubsub.Subscribe(pathAsTopic, subKey, fn)
 
-	closeCleanup := func() {
+	// define onclose function
+	onClose := func() {
 		t.Unsubscribe(subKey)
 		if len(t.Subs) == 0 {
 			if err := p.watcher.Remove(pathFile); err != nil {
@@ -122,8 +153,9 @@ func (p *WatcherMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	defer onClose()
 	conn.SetCloseHandler(func(code int, text string) error {
-		closeCleanup()
+		onClose()
 		return nil
 	})
 
@@ -152,6 +184,8 @@ func (p *WatcherMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					"ok":  false,
 					"msg": "binary message is not supported",
 				}
+			case websocket.CloseMessage:
+				return
 			}
 		}
 		// send back
