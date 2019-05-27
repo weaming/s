@@ -1,7 +1,7 @@
 github.com/AaronO/go-git-http v0.0.0-20161214145340-1d9485b3a98f h1:x/RDwGRneK2/891S2o7KhZt3MhHMSCssoeDOfvolTMk=
 github.com/AaronO/go-git-http v0.0.0-20161214145340-1d9485b3a98f/go.mod h1:+6Yuq73F9068Na+mSBNXCvyuxvgw4f/g5ii40e3U8Sc=
-github.com/NYTimes/gziphandler v1.0.1 h1:iLrQrdwjDd52kHDA5op2UBJFjmOb9g+7scBan4RN8F0=
-github.com/NYTimes/gziphandler v1.0.1/go.mod h1:3wb06e3pkSAbeQ52E9H9iFoQsEEwGN64994WTCIhntQ=
+github.com/NYTimes/gziphandler v1.1.1 h1:ZUDjpQae29j0ryrS0u/B8HZfJBtBQHjqw2rQ2cqUQ3I=
+github.com/NYTimes/gziphandler v1.1.1/go.mod h1:n/CVRwUEOgIxrgPvAQhUUr9oeUtvrhMomdKFjzJNB0c=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -14,9 +14,11 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0 h1:TivCn/peBQ7UY8ooIcPgZFpTNSz0Q2U6UrFlUfqbe0Q=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
-github.com/weaming/disk-analysis v0.0.0-20180716173137-499468110d3f h1:KJ2RZCKmPmZvuFrI6/HeNEzZbg132L1MeaOy/P9BUmI=
-github.com/weaming/disk-analysis v0.0.0-20180716173137-499468110d3f/go.mod h1:HIiRqan+WUPDN9uSWrv0XD238v5Jc8dWhlSm3bv76mU=
+github.com/weaming/disk-analysis v0.0.0-20180807135416-ef3f93c92f28 h1:MWAhjlU/lr1u9HOa91HeBlMN4yD+zrMBN1iKJEwavWY=
+github.com/weaming/disk-analysis v0.0.0-20180807135416-ef3f93c92f28/go.mod h1:HIiRqan+WUPDN9uSWrv0XD238v5Jc8dWhlSm3bv76mU=
 github.com/weaming/go-git-http v0.0.0-20180722082741-cd0469f04f1e h1:q1eCe4tgjPZsSMcNxlErDf4l02LtIhTev30oRUBOYz8=
 github.com/weaming/go-git-http v0.0.0-20180722082741-cd0469f04f1e/go.mod h1:/xttCBix5WkWMzWY8IxDSZ1hXbcm7kCdsS5FSxC0Y/M=
+github.com/weaming/pubsub v0.0.0-20190527082319-522ca586365e h1:EcYDc2DKqk+ED7u6Ed2cBpKEqCDgi8cQJbRSaXkXrTo=
+github.com/weaming/pubsub v0.0.0-20190527082319-522ca586365e/go.mod h1:tLpaExngOr2wOTaDXP6D6H4+JbWY6oLP+epAOUvJCFY=
 golang.org/x/sys v0.0.0-20190526052359-791d8a0f4d09 h1:IlD35wZE03o2qJy2o37WIskL33b7PT6cHdGnE8bieZs=
 golang.org/x/sys v0.0.0-20190526052359-791d8a0f4d09/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=

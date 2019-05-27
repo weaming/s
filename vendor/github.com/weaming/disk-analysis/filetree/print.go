@@ -6,7 +6,8 @@ import (
 )
 
 const (
-	SPACE           = "   "
+	SPACE_ONE       = " "
+	SPACE_THREE     = "   "
 	HORIZONTAL_LINE = "─"
 	VERTICAL_LINE   = "│"
 	T_PREFIX        = "├"
@@ -34,12 +35,12 @@ func PrintFileNodeTree(node *FileNode, prefix []string, depth, level int, human 
 
 			// last
 			if i+1 == len(node.Children) {
-				prefix = append(prefix[:len(prefix)-1], " ")
+				prefix = append(prefix[:len(prefix)-1], SPACE_ONE)
 			} else {
 				prefix = append(prefix[:len(prefix)-1], VERTICAL_LINE)
 			}
 
-			prefix = append(prefix, SPACE)
+			prefix = append(prefix, SPACE_THREE)
 			PrintFileNodeTree(x, prefix, depth+1, level, human)
 			prefix = append(prefix[:len(prefix)-2], T_PREFIX)
 		}

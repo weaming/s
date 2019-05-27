@@ -9,6 +9,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gorilla/websocket"
+	ps "github.com/weaming/pubsub"
 )
 
 var upgrader = websocket.Upgrader{
@@ -21,7 +22,7 @@ type WatcherMux struct {
 	Root      string
 	UrlPrefix string
 	watcher   *fsnotify.Watcher
-	pubsub    PubSub
+	pubsub    ps.PubSub
 }
 
 func NewWatcherMux(root, urlPrefix string) *WatcherMux {
@@ -29,7 +30,7 @@ func NewWatcherMux(root, urlPrefix string) *WatcherMux {
 	if err != nil {
 		log.Fatal(err)
 	}
-	pubsub := PubSub{}
+	pubsub := ps.PubSub{}
 	wm := &WatcherMux{
 		root,
 		urlPrefix,
