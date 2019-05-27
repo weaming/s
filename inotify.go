@@ -114,6 +114,11 @@ func (p *WatcherMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	lastLine := 0
 	reRead := func() {
 		text := ReadFile(pathFile)
+		// file truncated, read from start
+		if len(text) < len(lastRead) {
+			lastRead = ""
+			lastLine = 0
+		}
 		lines := strings.Split(text[len(lastRead):], "\n")
 		for i, line := range lines {
 			if i+1 == len(lines) && line == "" {
