@@ -1,0 +1,14 @@
+# github.com/NYTimes/gziphandler v1.1.1
+github.com/NYTimes/gziphandler
+# github.com/fsnotify/fsnotify v1.4.7
+github.com/fsnotify/fsnotify
+# github.com/gorilla/websocket v1.4.0
+github.com/gorilla/websocket
+# github.com/weaming/disk-analysis v0.0.0-20180807135416-ef3f93c92f28
+github.com/weaming/disk-analysis/filetree
+# github.com/weaming/go-git-http v0.0.0-20180722082741-cd0469f04f1e
+github.com/weaming/go-git-http
+# github.com/weaming/pubsub v0.0.0-20190527082319-522ca586365e
+github.com/weaming/pubsub
+# golang.org/x/sys v0.0.0-20190526052359-791d8a0f4d09
+golang.org/x/sys/unix
