@@ -9,7 +9,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gorilla/websocket"
-	ps "github.com/weaming/pubsub"
+	ps "github.com/weaming/golib/pubsub"
 )
 
 var upgrader = websocket.Upgrader{
