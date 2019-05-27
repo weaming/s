@@ -64,18 +64,19 @@ func main() {
 		if GIT {
 			urlPrefix := "/"
 			fmt.Println(red("Serve git smart http on path: %v", urlPrefix))
-			serveGit(ROOT, urlPrefix)
+			ServeGit(ROOT, urlPrefix)
 		} else {
 			Redirect("/", "/index/")
 
 			urlPrefix := "/git/"
 			fmt.Println(green("Serve git smart http on path: %v", urlPrefix))
-			serveGit(ROOT, urlPrefix)
+			ServeGit(ROOT, urlPrefix)
 		}
 
 		ServeFile("/favicon.ico", fp.Join(ROOT, "./favicon.ico"))
 		http.Handle("/index/", WWW{root: ROOT})
 		ServeDir("/s/", ROOT)
+		ServeFileWebsocket(ROOT, "/ws/")
 	}
 
 	fmt.Printf("Open http://127.0.0.1:%v to enjoy!\n", strings.Split(*LISTEN, ":")[1])
