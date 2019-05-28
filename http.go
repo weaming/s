@@ -104,3 +104,11 @@ func GetIntranetIP() (rv []string) {
 	}
 	return
 }
+
+func HTTPGetQuery(req *http.Request, name, dft string) string {
+	if values, ok := req.URL.Query()[name]; ok {
+		return values[len(values)-1]
+	} else {
+		return dft
+	}
+}

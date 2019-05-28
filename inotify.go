@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/fsnotify/fsnotify"
@@ -86,7 +87,15 @@ func (p *WatcherMux) Watch(path string) {
 
 func (p *WatcherMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Println("file as websocket:", r.URL)
-	lineNumbers := r.URL.Query().Get("linenumber") != ""
+	lineNumbers := HTTPGetQuery(r, "linenumber", "") != ""
+	from, e := strconv.Atoi(HTTPGetQuery(r, "from", "1"))
+	if e != nil {
+		from = 1
+	}
+	last, e := strconv.Atoi(HTTPGetQuery(r, "last", "0"))
+	if e != nil {
+		last = 0
+	}
 
 	// par url path and file path
 	pathAsTopic, err := filepath.Rel(p.UrlPrefix, r.URL.Path)
@@ -111,18 +120,27 @@ func (p *WatcherMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// load file contents
 	p.Watch(pathFile)
 
-	lastRead := ""
-	lastLine := 0
+	// client read cursor
+	lastLine := from
 	reRead := func() {
 		text := ReadFile(pathFile)
+		lines := strings.Split(text, "\n")
+		// remove the last "" after \n
+		lines = lines[:len(lines)-1]
+
 		// file truncated, read from start
-		if len(text) < len(lastRead) {
-			lastRead = ""
+		if len(lines) < lastLine {
 			lastLine = 0
 		}
-		lines := strings.Split(text[len(lastRead):], "\n")
+		// only get the last lines
+		if from == 1 && last > 0 {
+			lastLine = len(lines) - last + 1
+			// disable last for next time
+			last = 0
+		}
 		for i, line := range lines {
-			if i+1 == len(lines) && line == "" {
+			// ignore before lastLine
+			if i+1 < lastLine {
 				continue
 			}
 			lastLine += 1
@@ -132,7 +150,6 @@ func (p *WatcherMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				conn.WriteMessage(websocket.TextMessage, []byte(line))
 			}
 		}
-		lastRead = text
 	}
 	reRead()
 
