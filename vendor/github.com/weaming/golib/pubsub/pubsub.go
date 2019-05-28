@@ -38,10 +38,7 @@ func (p *PubSub) Subscribe(topic string, subKey string, fn MsgHandlerFunc) *Topi
 	// TODO: handle old fn
 	// if _, ok := t.Subs[subKey]; ok {
 	// }
-	t.Lock()
-	defer t.Unlock()
 	t.Subs[subKey] = fn
-	t.SubsLock[subKey] = sync.RWMutex{}
 	return t
 }
 
@@ -60,23 +57,21 @@ func (p *PubSub) StopIdleTopic(topic string) {
 }
 
 type Topic struct {
-	Topic    string
-	Stop     chan bool
-	Pub      chan interface{}
-	Subs     map[string]MsgHandlerFunc
-	SubsLock map[string]sync.RWMutex
-	pubsub   *PubSub
+	Topic  string
+	Stop   chan bool
+	Pub    chan interface{}
+	Subs   map[string]MsgHandlerFunc
+	pubsub *PubSub
 	sync.RWMutex
 }
 
 func NewTopic(topic string, pubsub *PubSub) *Topic {
 	t := &Topic{
-		Topic:    topic,
-		Stop:     make(chan bool, 1),
-		Pub:      make(chan interface{}, 10000),
-		Subs:     map[string]MsgHandlerFunc{},
-		SubsLock: map[string]sync.RWMutex{},
-		pubsub:   pubsub,
+		Topic:  topic,
+		Stop:   make(chan bool, 1),
+		Pub:    make(chan interface{}, 10000),
+		Subs:   map[string]MsgHandlerFunc{},
+		pubsub: pubsub,
 	}
 	(*pubsub)[topic] = t
 	go t.Start()
@@ -89,20 +84,16 @@ func (t *Topic) Start() {
 		select {
 		case x := <-t.Pub:
 			t.RLock()
-			for subKey, fn := range t.Subs {
+			for _, fn := range t.Subs {
 				// avoid block
 				go func(fn func(interface{}) error) {
-					l := t.SubsLock[subKey]
-					l.Lock()
-					defer l.Unlock()
-					// call the callback
 					err := fn(x)
 					if err != nil {
 						// put back
 						t.Pub <- x
 						log.Println(err.Error())
 					} else {
-						log.Println("sent message on topic \"%v\", message: %v", t.Topic, x)
+						log.Printf("sent message on topic \"%v\", message: %v", t.Topic, x)
 					}
 				}(fn)
 			}
@@ -121,7 +112,6 @@ func (t *Topic) Unsubscribe(subKey string) {
 	defer t.Unlock()
 	if _, ok := t.Subs[subKey]; ok {
 		delete(t.Subs, subKey)
-		delete(t.SubsLock, subKey)
 		log.Printf("unsubscribed on topic %s for key %s", t.Topic, subKey)
 	}
 }
