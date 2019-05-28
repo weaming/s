@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gorilla/websocket"
@@ -122,6 +123,7 @@ func (p *WatcherMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// client read cursor
 	lastLine := from
+	lock := sync.Mutex{}
 	reRead := func() {
 		text := ReadFile(pathFile)
 		lines := strings.Split(text, "\n")
@@ -138,12 +140,15 @@ func (p *WatcherMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			// disable last for next time
 			last = 0
 		}
+		lock.Lock()
+		defer lock.Unlock()
 		for i, line := range lines {
 			// ignore before lastLine
 			if i+1 < lastLine {
 				continue
 			}
 			lastLine += 1
+
 			if lineNumbers {
 				conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("%d %s", lastLine, line)))
 			} else {

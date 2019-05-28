@@ -8,7 +8,7 @@ github.com/gorilla/websocket
 github.com/weaming/disk-analysis/filetree
 # github.com/weaming/go-git-http v0.0.0-20180722082741-cd0469f04f1e
 github.com/weaming/go-git-http
-# github.com/weaming/golib v0.0.0-20190527084303-735413499bde
+# github.com/weaming/golib v0.0.0-20190528102444-f65cfdd2c73a
 github.com/weaming/golib/pubsub
-# golang.org/x/sys v0.0.0-20190526052359-791d8a0f4d09
+# golang.org/x/sys v0.0.0-20190528012530-adf421d2caf4
 golang.org/x/sys/unix
