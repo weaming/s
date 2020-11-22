@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/weaming/disk-analysis/filetree"
+    "github.com/weaming/itree/filetree"
 )
 
 const rates = 1024

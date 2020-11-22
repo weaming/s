@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/weaming/disk-analysis/filetree"
+	"github.com/weaming/itree/filetree"
 )
 
 func totalSizeOfNodes(nodes []*filetree.FileNode) (total int64) {
