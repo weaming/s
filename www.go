@@ -20,9 +20,9 @@ type WWW struct {
 }
 
 func (p WWW) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	logit(r)
-	if NEED_AUTH {
-		mybasicAuth(p.handlerFunc, ADMIN, PASSWORD)(w, r)
+	logRequest(r)
+	if config.needAuth {
+		myBasicAuth(p.handlerFunc, config.admin, config.password)(w, r)
 	} else {
 		p.handlerFunc(w, r)
 	}
@@ -41,6 +41,13 @@ func (p WWW) handlerFunc(w http.ResponseWriter, r *http.Request) {
 	}
 
 	filePath := filepath.Join(p.root, pathName[6:])
+
+	if !IsPathSafe(p.root, filePath) {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Access denied: invalid path"))
+		return
+	}
+
 	node := filetree.NewFileNode(filePath, filePath, nil, false)
 	if node == nil {
 		w.Write([]byte("Invalid URL"))
@@ -49,7 +56,7 @@ func (p WWW) handlerFunc(w http.ResponseWriter, r *http.Request) {
 		p.node = node
 	}
 
-	pagination, htmlFiles, realPage := HtmlOfFiles(pathName, p.node, page)
+	pagination, htmlFiles, realPage := HtmlOfFiles(pathName, p.node, page, config.pageSize)
 	if realPage != page {
 		fmt.Println(realPage)
 		target, _ := AddQuery(pathName, "page", strconv.Itoa(realPage))
@@ -70,7 +77,7 @@ func (p WWW) handlerFunc(w http.ResponseWriter, r *http.Request) {
 		min-height: 100vh;
 		margin: 0;
 		padding-top: 1rem;
-		font-family 'Avenir', Helvetica, Arial, sans-serif;
+		font-family: 'Avenir', Helvetica, Arial, sans-serif;
 	}
 	h3 { margin: 0.6rem 1rem; }
 
@@ -138,13 +145,13 @@ func (p WWW) handlerFunc(w http.ResponseWriter, r *http.Request) {
 	//return
 }
 
-func HtmlOfFiles(pathName string, node *filetree.FileNode, page int) (string, []string, int) {
+func HtmlOfFiles(pathName string, node *filetree.FileNode, page, pageSize int) (string, []string, int) {
 	var (
 		pagination string
 		htmlFiles  []string
 	)
 
-	currentFiles, previous, next, realPage := Paging(node.Files, page, size)
+	currentFiles, previous, next, realPage := Paging(node.Files, page, pageSize)
 
 	// add pagination
 	var htmlPrevious, htmlNext string

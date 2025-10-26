@@ -4,9 +4,9 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -41,10 +41,29 @@ func Sha256(s string) string {
 }
 
 func ReadFile(path string) string {
-	data, err := ioutil.ReadFile(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		log.Println("File reading error", err)
 		return ""
 	}
 	return string(data)
+}
+
+func IsPathSafe(baseDir, requestedPath string) bool {
+	cleanBase, err := filepath.Abs(baseDir)
+	if err != nil {
+		return false
+	}
+
+	cleanPath, err := filepath.Abs(requestedPath)
+	if err != nil {
+		return false
+	}
+
+	relPath, err := filepath.Rel(cleanBase, cleanPath)
+	if err != nil {
+		return false
+	}
+
+	return !strings.HasPrefix(relPath, "..") && !filepath.IsAbs(relPath)
 }

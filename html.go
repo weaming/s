@@ -18,7 +18,7 @@ func AddQuery(pathName, key, value string) (string, error) {
 		return pathName, err
 	}
 	q := u.Query()
-	q.Set("page", value)
+	q.Set(key, value)
 	u.RawQuery = q.Encode()
 	return u.String(), nil
 }

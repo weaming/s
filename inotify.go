@@ -102,6 +102,13 @@ func (p *WatcherMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	pathAsTopic, err := filepath.Rel(p.UrlPrefix, r.URL.Path)
 	PanicErr(err)
 	pathFile := filepath.Join(p.Root, pathAsTopic)
+
+	if !IsPathSafe(p.Root, pathFile) {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("access denied: invalid path"))
+		return
+	}
+
 	if !ExistFile(pathFile) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(fmt.Sprintf("not found %s", pathAsTopic)))
@@ -128,33 +135,41 @@ func (p *WatcherMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		text := ReadFile(pathFile)
 		lines := strings.Split(text, "\n")
 		// remove the last "" after \n
-		lines = lines[:len(lines)-1]
+		if len(lines) > 0 {
+			lines = lines[:len(lines)-1]
+		}
+
+		lock.Lock()
+		defer lock.Unlock()
 
 		// file truncated, read from start
 		if len(lines) < lastLine {
-			lastLine = 0
+			lastLine = 1
 		}
 		// only get the last lines
 		if from == 1 && last > 0 {
-			lastLine = len(lines) - last + 1
+			if last < len(lines) {
+				lastLine = len(lines) - last + 1
+			} else {
+				lastLine = 1
+			}
 			// disable last for next time
 			last = 0
 		}
-		lock.Lock()
-		defer lock.Unlock()
+
 		for i, line := range lines {
 			// ignore before lastLine
 			if i+1 < lastLine {
 				continue
 			}
-			lastLine += 1
 
 			if lineNumbers {
-				conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("%d %s", lastLine, line)))
+				conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("%d %s", i+1, line)))
 			} else {
 				conn.WriteMessage(websocket.TextMessage, []byte(line))
 			}
 		}
+		lastLine = len(lines) + 1
 	}
 	reRead()
 

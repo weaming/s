@@ -10,15 +10,15 @@ import (
 	"github.com/NYTimes/gziphandler"
 )
 
-func redirect_handler(to string) http.HandlerFunc {
+func redirectHandler(to string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		logit(r)
+		logRequest(r)
 		http.Redirect(w, r, to, 302)
 	}
 }
 
 func Redirect(from, to string) {
-	http.Handle(from, redirect_handler(to))
+	http.Handle(from, redirectHandler(to))
 }
 
 func ServeDir(prefix, path string) {
@@ -33,19 +33,19 @@ func ServeDir(prefix, path string) {
 
 func ServeFile(path, fp string) {
 	http.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-		logit(r)
+		logRequest(r)
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Server", "https://github.com/weaming/s")
 		http.ServeFile(w, r, fp)
 	})
 }
 
-func logit(r *http.Request) {
+func logRequest(r *http.Request) {
 	log.Printf(`%v "%v %v %v"`, r.RemoteAddr, r.Method, r.RequestURI, r.Proto)
 }
 
 func getQuery(r *http.Request, name string) (v string) {
-	v = r.URL.Query().Get("page")
+	v = r.URL.Query().Get(name)
 	return
 }
 
@@ -77,15 +77,13 @@ func BasicAuth(handler http.HandlerFunc, realm string, check func(string, string
 	}
 }
 
-func mybasicAuth(handler http.HandlerFunc, username, password string) http.HandlerFunc {
+func myBasicAuth(handler http.HandlerFunc, username, password string) http.HandlerFunc {
 	return BasicAuth(handler, "hello", func(user, pass string) bool {
 		if user == username && pass == password {
-			//green(fmt.Sprintf("Auth success: name: [%v]; password: [%v]", user, pass))
 			return true
-		} else {
-			red(fmt.Sprintf("Auth fail: name: [%v]; password: [%v]", user, pass))
-			return false
 		}
+		log.Println(red("Auth fail: name: [%v]; password: [%v]", user, pass))
+		return false
 	})
 }
 

@@ -10,23 +10,28 @@ import (
 	"strings"
 )
 
-const DEFAULT_PW = "admin"
+const defaultPassword = "admin"
 
-var size int
-var NEED_AUTH bool
-var GIT bool
-var ADMIN, PASSWORD string
-var PURE_STATIC bool
+type Config struct {
+	pageSize    int
+	needAuth    bool
+	git         bool
+	admin       string
+	password    string
+	pureStatic  bool
+}
+
+var config Config
 
 func main() {
 	var LISTEN = flag.String("l", ":8000", "Listen [host]:port, default bind to 0.0.0.0")
 
-	flag.BoolVar(&NEED_AUTH, "a", false, "Whether need authorization.")
-	flag.BoolVar(&GIT, "git", false, "Whether serve as git protocol smart http")
-	flag.BoolVar(&PURE_STATIC, "pure", false, "serve static on /")
-	flag.StringVar(&ADMIN, "u", "admin", "Basic authorization username")
-	flag.StringVar(&PASSWORD, "p", DEFAULT_PW, "Basic authorization password")
-	flag.IntVar(&size, "n", 20, "The maximum number of files in each page.")
+	flag.BoolVar(&config.needAuth, "a", false, "Whether need authorization.")
+	flag.BoolVar(&config.git, "git", false, "Whether serve as git protocol smart http")
+	flag.BoolVar(&config.pureStatic, "pure", false, "serve static on /")
+	flag.StringVar(&config.admin, "u", "admin", "Basic authorization username")
+	flag.StringVar(&config.password, "p", defaultPassword, "Basic authorization password")
+	flag.IntVar(&config.pageSize, "n", 20, "The maximum number of files in each page.")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s [options] ROOT\nThe ROOT is the directory to be serve.\n\n", os.Args[0])
@@ -35,7 +40,11 @@ func main() {
 	flag.Parse()
 
 	// check the directory path
-	ROOT, _ := fp.Abs(flag.Arg(0))
+	ROOT, err := fp.Abs(flag.Arg(0))
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Invalid path:", err)
+		os.Exit(1)
+	}
 	fi, err := os.Stat(ROOT)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -46,22 +55,22 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println(green("To be listed direcotry: [%v]", ROOT))
+	fmt.Println(green("To be listed directory: [%v]", ROOT))
 
 	// basic authentication
-	if NEED_AUTH {
-		if PASSWORD == DEFAULT_PW {
+	if config.needAuth {
+		if config.password == defaultPassword {
 			fmt.Println(red("Warning: set yourself password by option -p"))
 		}
-		fmt.Println(green("Your basic auth name and password: [%v:%v]", ADMIN, PASSWORD))
+		fmt.Println(green("Your basic auth name and password: [%v:%v]", config.admin, config.password))
 	} else {
 		fmt.Println(red("Warning: please set your HTTP basic authentication"))
 	}
 
-	if PURE_STATIC {
+	if config.pureStatic {
 		ServeDir("/", ROOT)
 	} else {
-		if GIT {
+		if config.git {
 			urlPrefix := "/"
 			fmt.Println(red("Serve git smart http on path: %v", urlPrefix))
 			ServeGit(ROOT, urlPrefix)
